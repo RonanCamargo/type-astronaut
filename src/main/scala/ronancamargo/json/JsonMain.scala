@@ -1,9 +1,15 @@
 package ronancamargo.json
 
-import shapeless.syntax.SingletonOps
+import ronancamargo.json.data.{Circle, IceCream, Shape}
+
+import scala.util.chaining._
 
 object JsonMain extends App {
-  import shapeless.syntax.singleton._
-  val one = 1.narrow
-  println(one.getClass)
+
+  val shape: Shape = Circle(1.0)
+  JsonEncoder[Shape].encode(shape).tap(println)
+
+  val iceCream = IceCream("Sundae", 1, false)
+  JsonEncoder[IceCream].encode(iceCream).tap(println)
+
 }
