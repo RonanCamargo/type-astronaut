@@ -1,6 +1,6 @@
 package ronancamargo.csv
 
-import ronancamargo.csv.data.{Circle, Employee, Rectangle, Shape}
+import ronancamargo.csv.data.{Circle, Employee, Leaf, Rectangle, Shape, Tree}
 
 import scala.util.chaining._
 
@@ -20,4 +20,6 @@ object CsvMain extends App {
   val shapes: List[Shape] = List(Circle(2), Rectangle(1, 5))
 
   writeCsv(shapes).tap(println)
+
+  CsvEncoder[Tree[Int]]
 }
