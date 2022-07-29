@@ -1,12 +1,5 @@
-import ronancamargo.firestore.ast.FirestoreArray
-import ronancamargo.firestore.ast.FirestoreString
-import ronancamargo.firestore.ast.FirestoreNull
-import ronancamargo.firestore.ast.FirestoreObject
-import ronancamargo.firestore.ast.FirestoreInt
-import ronancamargo.firestore.ast.FirestoreMap
-import ronancamargo.firestore.ast.FirestoreBoolean
-import ronancamargo.firestore.ast.FirestoreDocument
 import ronancamargo.firestore.FirestoreEncoder
+import ronancamargo.firestore.ast._
 case class Person(
     name: String,
     age: Int,
@@ -34,11 +27,9 @@ def toFirestore(document: FirestoreDocument): AnyRef = document match {
   case FirestoreArray(array)     => array.map(toFirestore).asJava
   case FirestoreString(string)   => string.asInstanceOf[AnyRef]
   case FirestoreNull             => null
-  case FirestoreObject(fields)   => fields.map{case (k, v) => k -> toFirestore(v)}.toMap.asJava
+  case FirestoreObject(fields)   => fields.map { case (k, v) => k -> toFirestore(v) }.toMap.asJava
   case FirestoreInt(n)           => n.asInstanceOf[AnyRef]
-  case FirestoreMap(map)         => map.map{
-    case (k, v) => k -> toFirestore(v)
-  }.asJava
+  case FirestoreMap(map)         => map.map { case (k, v) => k -> toFirestore(v) }.asJava
   case FirestoreBoolean(boolean) => boolean.asInstanceOf[AnyRef]
 }
 

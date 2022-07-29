@@ -6,4 +6,5 @@ object Main extends App {
 
   final case class DocBoolean(value: Boolean) extends Document
   final case class DocLong(value: Long)       extends Document
+
 }

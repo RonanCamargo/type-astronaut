@@ -1,3 +1,4 @@
+import shapeless.LabelledGeneric
 import shapeless.Witness
 import shapeless.Poly1
 import shapeless.labelled
