@@ -22,6 +22,20 @@ case class Name(name: String)
 
 // class MapperOps[HA <: HList](a: Int)
 
+class Adder[A, B, HA <: HList, HB <: HList, HC <: HList](a: A)(implicit
+    genA: LabelledGeneric.Aux[A, HA],
+    genB: LabelledGeneric.Aux[B, HB],
+    intersection: sops.Intersection.Aux[HA, HB, HA]
+) {
+  def adding[C](c: C)(implicit genC: LabelledGeneric.Aux[C, HC], union: sops.Union.Aux[HA, HC, HB]): B = {
+    val ha  = genA.to(a)
+    val int = intersection(ha)
+    val uni = union(ha, genC.to(c))
+    genB.from(uni)
+
+  }
+}
+
 implicit class MapperOps[A, HA <: HList, HB <: HList, HC <: HList, HD <: HList](a: A) {
   def to[B](implicit
       genA: LabelledGeneric.Aux[A, HA],
@@ -49,23 +63,28 @@ implicit class MapperOps[A, HA <: HList, HB <: HList, HC <: HList, HD <: HList](
       genC: LabelledGeneric.Aux[C, HC],
       intersection: sops.Intersection.Aux[HA, HB, HA],
       union: sops.Union.Aux[HA, HC, HB]
-  )= {
-    val ha = genA.to(a)
-    val int  = intersection(ha)
+  ) = {
+    val ha  = genA.to(a)
+    val int = intersection(ha)
     val uni = union(ha, genC.to(c))
-    // val un = union(genB.to(b), genC.to(c))
-    // genD.from(un)
     genB.from(uni)
   }
+  def targetTo[B](implicit
+      genA: LabelledGeneric.Aux[A, HA],
+      genB: LabelledGeneric.Aux[B, HB],
+      intersection: sops.Intersection.Aux[HA, HB, HA]
+  ): Adder[A, B, HA, HB, HC] = new Adder[A, B, HA, HB, HC](a)
 }
 
 Person("Someone", 100).to[Person2]
 
 case class State(value: Boolean)
-case class PersonWithState(name: String,age: Int,  value: Boolean)
+case class PersonWithState(name: String, age: Int, value: Boolean)
 // Person("Someone", 100).withCD[Person2, State, PersonWithState](State(true))
 
 Person("Someone", 100).withC[PersonWithState, State](State(true))
+
+Person("Someone", 100).targetTo[PersonWithState].adding(State(true))
 
 trait EntityMapper[A, B] {
   def to(from: A): B
