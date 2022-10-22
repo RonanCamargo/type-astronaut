@@ -18,4 +18,11 @@ object getFieldName extends Poly1 {
     at[FieldType[K, V]](getFieldName(_))
 }
 
+object getFieldValue extends Poly1 {
+  private def getFieldValue[K, V](value: FieldType[K, V]): V = value
+  implicit def caseValue[K, V]: Case.Aux[FieldType[K, V], V] =
+    at[FieldType[K, V]](getFieldValue(_))
+}
+
 betterTypedGarfield.map(getFieldName)
+betterTypedGarfield.map(getFieldValue)
